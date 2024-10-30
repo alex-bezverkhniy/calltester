@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"calltester/internal"
+	"calltester/internal/models"
 
 	c_kafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
-func Pub(cfg *internal.Config) {
+func Pub(cfg *models.Config) {
 	producer, err := c_kafka.NewProducer(&c_kafka.ConfigMap{
 		"bootstrap.servers": cfg.GetUrl(),
 		"client.id":         "calltester-pub",
@@ -41,7 +41,7 @@ func Pub(cfg *internal.Config) {
 	close(delivery_chan)
 }
 
-func Sub(cfg *internal.Config) {
+func Sub(cfg *models.Config) {
 	fmt.Printf("Starting consumer for topic: %s\n", cfg.Topic)
 	fmt.Println("To exit press CTRL+C")
 	consumer, err := c_kafka.NewConsumer(&c_kafka.ConfigMap{
