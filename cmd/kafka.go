@@ -12,7 +12,7 @@ import (
 // kafkaCmd represents the kafka command
 var kafkaCmd = &cobra.Command{
 	Use:   "kafka",
-	Short: "Test Kafka message broker (MQ)",
+	Short: "Perform rests to Kafka (MQ)",
 	Long: `Use this command to test Kafka broker. 
 	You can use it to produce and consume messages for/from Kafka topics.`,
 	Run: func(cmd *cobra.Command, args []string) {
