@@ -18,4 +18,4 @@ tidy:
 ## build: Builds executable for Linux
 .PHONY: build
 build: 
-		go build -o bin/calltester cmd/calltester.go 
+		go build -o bin/calltester main.go 
