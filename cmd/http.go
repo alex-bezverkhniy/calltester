@@ -59,6 +59,7 @@ func init() {
 	httpCmd.PersistentFlags().StringP("data", "d", `{"test": "test"}`, "Request data")
 	httpCmd.PersistentFlags().StringP("proxy", "p", "", "Proxy URL")
 	httpCmd.PersistentFlags().StringP("method", "m", "GET", "Method of the request (GET, POST, PUT, DELETE, PATCH, HEAD)")
+	httpCmd.PersistentFlags().StringArrayP("header", "H", []string{"Accept: */*"}, "HTTP header")
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// httpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")

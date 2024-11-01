@@ -37,6 +37,7 @@ type (
 		method  string
 		data    string
 		proxy   string
+		headers []string
 		verbose bool
 	}
 )
@@ -46,6 +47,7 @@ func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string) (HttpSe
 	var data string
 	var proxy string
 	var verbose bool
+	var headers []string
 	var err error
 
 	if url, err = cmd.Flags().GetString("url"); err != nil {
@@ -64,7 +66,12 @@ func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string) (HttpSe
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		return nil, err
 	}
-	s := NewHttpService(url, method, data, proxy, verbose)
+	if headers, err = cmd.Flags().GetStringArray("header"); err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		return nil, err
+	}
+
+	s := NewHttpService(url, method, data, proxy, headers, verbose)
 
 	return s, nil
 }
@@ -80,8 +87,8 @@ func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
 	return NewHttpServiceByCommandAndMethod(cmd, method)
 }
 
-func NewHttpService(url, method, data, proxy string, verbose bool) HttpService {
-	return &HttpServiceImpl{url, method, data, proxy, verbose}
+func NewHttpService(url, method, data, proxy string, headers []string, verbose bool) HttpService {
+	return &HttpServiceImpl{url, method, data, proxy, headers, verbose}
 }
 
 func (s *HttpServiceImpl) MakeRequest() error {
@@ -91,6 +98,10 @@ func (s *HttpServiceImpl) MakeRequest() error {
 		fmt.Printf("\tmethod: %s\n", s.method)
 		fmt.Printf("\tdata: %s\n", s.data)
 		fmt.Printf("\tproxy: %s\n", s.proxy)
+		fmt.Println("\theaders: ")
+		for _, h := range s.headers {
+			fmt.Println("\t  ", h)
+		}
 	}
 	return nil
 }
