@@ -31,9 +31,10 @@ import (
 
 // postCmd represents the post command
 var postCmd = &cobra.Command{
-	Use:   "post",
-	Short: "send POST request",
-	Long:  `You can use it to send POST request.`,
+	Use:     "post",
+	Aliases: []string{"POST"},
+	Short:   "send POST request",
+	Long:    `You can use it to send POST request.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "post")
 		if err != nil {

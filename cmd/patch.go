@@ -31,9 +31,10 @@ import (
 
 // patchCmd represents the patch command
 var patchCmd = &cobra.Command{
-	Use:   "patch",
-	Short: "send PATCH request",
-	Long:  `You can use it to send PATCH request.`,
+	Use:     "patch",
+	Aliases: []string{"PATCH"},
+	Short:   "send PATCH request",
+	Long:    `You can use it to send PATCH request.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "patch")
 		if err != nil {

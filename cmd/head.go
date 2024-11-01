@@ -31,9 +31,10 @@ import (
 
 // headCmd represents the head command
 var headCmd = &cobra.Command{
-	Use:   "head",
-	Short: "send HEAD request",
-	Long:  `You can use it to send HEAD request.`,
+	Use:     "head",
+	Aliases: []string{"HEAD"},
+	Short:   "send HEAD request",
+	Long:    `You can use it to send HEAD request.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "head")
 		if err != nil {

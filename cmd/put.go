@@ -31,9 +31,10 @@ import (
 
 // putCmd represents the put command
 var putCmd = &cobra.Command{
-	Use:   "put",
-	Short: "send PUT request",
-	Long:  `You can use it to send PUT request.`,
+	Use:     "put",
+	Aliases: []string{"PUT"},
+	Short:   "send PUT request",
+	Long:    `You can use it to send PUT request.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "put")
 		if err != nil {

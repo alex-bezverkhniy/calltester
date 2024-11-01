@@ -31,9 +31,10 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get",
-	Short: "send GET request",
-	Long:  `You can use it to send GET request.`,
+	Use:     "get",
+	Aliases: []string{"GET"},
+	Short:   "send GET request",
+	Long:    `You can use it to send GET request.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		httpService, err := services.NewHttpServiceByCommand(cmd)
 		if err != nil {
