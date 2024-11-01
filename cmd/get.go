@@ -22,41 +22,44 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/alex-bezverkhniy/calltester/pkg/services"
 	"github.com/spf13/cobra"
 )
 
-var version = "0.0.1"
+// getCmd represents the get command
+var getCmd = &cobra.Command{
+	Use:     "get",
+	Aliases: []string{"GET"},
+	Short:   "send GET request",
+	Long:    `You can use it to send GET request.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		httpService, err := services.NewHttpServiceByCommand(cmd, args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error:", err)
+			return
+		}
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:     "calltester",
-	Version: version,
-	Short:   "Tool to test/call different type of services",
-	Long: `This is o tool to test/call different type of services, 
-including REST, GraphQL, Websocket, MQTT, etc. `,
-	// Run: func(cmd *cobra.Command, args []string) { },
-}
-
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
+		err = httpService.MakeRequest()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error:", err)
+			return
+		}
+	},
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
+	httpCmd.AddCommand(getCmd)
+
 	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.calltester.yaml)")
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// getCmd.PersistentFlags().String("foo", "", "A help for foo")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
