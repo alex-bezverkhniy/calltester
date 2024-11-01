@@ -36,7 +36,7 @@ var postCmd = &cobra.Command{
 	Short:   "send POST request",
 	Long:    `You can use it to send POST request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "post")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "post", args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return

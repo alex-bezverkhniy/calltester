@@ -36,7 +36,7 @@ var getCmd = &cobra.Command{
 	Short:   "send GET request",
 	Long:    `You can use it to send GET request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommand(cmd)
+		httpService, err := services.NewHttpServiceByCommand(cmd, args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return

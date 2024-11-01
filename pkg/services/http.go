@@ -48,7 +48,7 @@ type (
 	}
 )
 
-func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string) (HttpService, error) {
+func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string, args []string) (HttpService, error) {
 	var url string
 	var data string
 	var proxy string
@@ -77,12 +77,18 @@ func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string) (HttpSe
 		return nil, err
 	}
 
+	if len(url) == 0 {
+		if url, err = tryGetURL(args); err != nil {
+			return nil, err
+		}
+	}
+
 	s := NewHttpService(url, method, data, proxy, headers, verbose)
 
 	return s, nil
 }
 
-func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
+func NewHttpServiceByCommand(cmd *cobra.Command, args []string) (HttpService, error) {
 	var method string
 	var err error
 
@@ -90,7 +96,7 @@ func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		return nil, err
 	}
-	return NewHttpServiceByCommandAndMethod(cmd, method)
+	return NewHttpServiceByCommandAndMethod(cmd, method, args)
 }
 
 func NewHttpService(url, method, data, proxy string, headers []string, verbose bool) HttpService {
@@ -182,4 +188,15 @@ func (s *HttpServiceImpl) printResponse(resp *http.Response) error {
 		fmt.Fprintf(s.out, "%s\n", respBody)
 	}
 	return nil
+}
+
+func tryGetURL(args []string) (string, error) {
+	if len(args) > 0 {
+		url := args[0]
+		if !strings.HasPrefix(url, "http://") || !strings.HasPrefix(url, "https://") {
+			url = "http://" + url
+		}
+		return url, nil
+	}
+	return "", fmt.Errorf("url is required")
 }

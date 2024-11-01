@@ -36,7 +36,7 @@ var putCmd = &cobra.Command{
 	Short:   "send PUT request",
 	Long:    `You can use it to send PUT request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "put")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "put", args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return

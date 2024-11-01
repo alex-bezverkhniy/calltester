@@ -36,7 +36,7 @@ var headCmd = &cobra.Command{
 	Short:   "send HEAD request",
 	Long:    `You can use it to send HEAD request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "head")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "head", args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return

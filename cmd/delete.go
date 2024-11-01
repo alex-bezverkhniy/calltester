@@ -36,7 +36,7 @@ var deleteCmd = &cobra.Command{
 	Short:   "send DELETE request",
 	Long:    `You can use it to send DELETE request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "delete")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "delete", args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return

@@ -36,7 +36,7 @@ var patchCmd = &cobra.Command{
 	Short:   "send PATCH request",
 	Long:    `You can use it to send PATCH request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "patch")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "patch", args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return
