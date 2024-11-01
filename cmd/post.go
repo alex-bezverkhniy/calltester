@@ -23,22 +23,29 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/alex-bezverkhniy/calltester/pkg/services"
 	"github.com/spf13/cobra"
 )
 
 // postCmd represents the post command
 var postCmd = &cobra.Command{
-	Use:   "post",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "get",
+	Short: "send POST request",
+	Long:  `You can use it to send POST request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("post called")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "post")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error:", err)
+			return
+		}
+
+		err = httpService.MakeRequest()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error:", err)
+			return
+		}
 	},
 }
 
