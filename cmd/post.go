@@ -23,43 +23,35 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/alex-bezverkhniy/calltester/pkg/services"
 	"github.com/spf13/cobra"
 )
 
-// httpCmd represents the http command
-var httpCmd = &cobra.Command{
-	Use:   "http",
-	Short: "Send HTTP requests",
-	Long:  `You can use it to test HTTP server.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommand(cmd)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
-			return
-		}
+// postCmd represents the post command
+var postCmd = &cobra.Command{
+	Use:   "post",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
 
-		if err := httpService.MakeRequest(); err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
-			return
-		}
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("post called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(httpCmd)
+	httpCmd.AddCommand(postCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	httpCmd.PersistentFlags().StringP("url", "u", "http://localhost", "URL to send requests to")
-	httpCmd.PersistentFlags().StringP("data", "d", `{"test": "test"}`, "Request data")
-	httpCmd.PersistentFlags().StringP("proxy", "p", "", "Proxy URL")
-	httpCmd.PersistentFlags().StringP("method", "m", "GET", "Method of the request (GET, POST, PUT, DELETE, PATCH)")
+	// postCmd.PersistentFlags().String("foo", "", "A help for foo")
+
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// httpCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// postCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
