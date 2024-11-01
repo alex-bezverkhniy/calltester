@@ -22,8 +22,12 @@ THE SOFTWARE.
 package services
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -39,6 +43,8 @@ type (
 		proxy   string
 		headers []string
 		verbose bool
+		client  *http.Client
+		out     *os.File
 	}
 )
 
@@ -88,20 +94,92 @@ func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
 }
 
 func NewHttpService(url, method, data, proxy string, headers []string, verbose bool) HttpService {
-	return &HttpServiceImpl{url, method, data, proxy, headers, verbose}
+	client := http.Client{}
+	return &HttpServiceImpl{url, strings.ToUpper(method), data, proxy, headers, verbose, &client, os.Stderr}
 }
 
 func (s *HttpServiceImpl) MakeRequest() error {
-	if s.verbose {
-		fmt.Println("http request:")
-		fmt.Printf("\turl: %s\n", s.url)
-		fmt.Printf("\tmethod: %s\n", s.method)
-		fmt.Printf("\tdata: %s\n", s.data)
-		fmt.Printf("\tproxy: %s\n", s.proxy)
-		fmt.Println("\theaders: ")
-		for _, h := range s.headers {
-			fmt.Println("\t  ", h)
+	// Request body
+	var dataReader io.Reader
+	if len(s.data) > 0 {
+		dataReader = bytes.NewReader([]byte(s.data))
+	}
+
+	// Request
+	req, err := http.NewRequest(s.method, s.url, dataReader)
+	if err != nil {
+		return err
+	}
+
+	// Headers
+	for _, h := range s.headers {
+		parts := strings.SplitN(h, ":", 2)
+		if len(parts) == 2 {
+			req.Header.Add(parts[0], parts[1])
 		}
+	}
+
+	s.printRequest(req)
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	return s.printResponse(resp)
+}
+
+func (s *HttpServiceImpl) printRequest(req *http.Request) {
+	if s.verbose {
+		path := req.URL.Path
+		if len(path) == 0 {
+			path = "/"
+		}
+		fmt.Fprintf(s.out, "> %s %s %s\n", req.Method, path, req.Proto)
+		fmt.Fprintf(s.out, "> Host: %s\n", req.Host)
+		for h, v := range req.Header {
+			val := ""
+			if len(v) > 0 {
+				val = v[0]
+			}
+			fmt.Fprintf(s.out, "> %s: %s\n", h, val)
+		}
+
+		for h, v := range req.Trailer {
+			val := ""
+			if len(v) > 0 {
+				val = v[0]
+			}
+			fmt.Fprintf(s.out, "> %s: %s\n", h, val)
+		}
+		fmt.Fprintln(s.out, ">")
+	}
+}
+
+func (s *HttpServiceImpl) printResponse(resp *http.Response) error {
+	if s.verbose {
+		path := resp.Request.URL.Path
+		if len(path) == 0 {
+			path = "/"
+		}
+		fmt.Fprintf(s.out, "< %s %s %s\n", resp.Proto, path, resp.Status)
+		for h, v := range resp.Header {
+			val := ""
+			if len(v) > 0 {
+				val = v[0]
+			}
+			fmt.Fprintf(s.out, "< %s: %s\n", h, val)
+		}
+		fmt.Fprintln(s.out, "<")
+	}
+	respBody, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	if err != nil {
+		return err
+	}
+
+	if len(respBody) > 0 {
+		fmt.Fprintf(s.out, "%s\n", respBody)
 	}
 	return nil
 }
