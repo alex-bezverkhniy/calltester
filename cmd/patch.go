@@ -29,13 +29,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// postCmd represents the post command
-var postCmd = &cobra.Command{
-	Use:   "post",
-	Short: "send POST request",
-	Long:  `You can use it to send POST request.`,
+// patchCmd represents the patch command
+var patchCmd = &cobra.Command{
+	Use:   "patch",
+	Short: "send PATCH request",
+	Long:  `You can use it to send PATCH request.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "post")
+		httpService, err := services.NewHttpServiceByCommandAndMethod(cmd, "patch")
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error:", err)
 			return
@@ -50,15 +50,15 @@ var postCmd = &cobra.Command{
 }
 
 func init() {
-	httpCmd.AddCommand(postCmd)
+	httpCmd.AddCommand(patchCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// postCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// patchCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// postCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// patchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
