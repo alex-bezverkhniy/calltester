@@ -41,19 +41,14 @@ type (
 	}
 )
 
-func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
+func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string) (HttpService, error) {
 	var url string
-	var method string
 	var data string
 	var proxy string
 	var verbose bool
 	var err error
 
 	if url, err = cmd.Flags().GetString("url"); err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
-		return nil, err
-	}
-	if method, err = cmd.Flags().GetString("method"); err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		return nil, err
 	}
@@ -72,6 +67,17 @@ func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
 	s := NewHttpService(url, method, data, proxy, verbose)
 
 	return s, nil
+}
+
+func NewHttpServiceByCommand(cmd *cobra.Command) (HttpService, error) {
+	var method string
+	var err error
+
+	if method, err = cmd.Flags().GetString("method"); err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		return nil, err
+	}
+	return NewHttpServiceByCommandAndMethod(cmd, method)
 }
 
 func NewHttpService(url, method, data, proxy string, verbose bool) HttpService {
