@@ -10,11 +10,11 @@ TODO: Write installation instructions
 
 ## Features
 
-[x] HTTP API calls (POST, GET, PUT, PATCH, DELETE etc.)
-[x] Kafka subscriber and producer
-[] Build-in JSON support
-[] WebSocket API calls
-[] GraphQL API calls 
+- [x] HTTP API calls (POST, GET, PUT, PATCH, DELETE etc.)
+- [x] Kafka subscriber and producer
+- [ ] Build-in JSON support `TODO`
+- [ ] WebSocket API calls `TODO`
+- [ ] GraphQL API calls `TODO`
 
 ## Example
 
