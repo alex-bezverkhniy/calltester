@@ -23,12 +23,14 @@ package services
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/TylerBrock/colorjson"
 	"github.com/spf13/cobra"
 )
 
@@ -185,15 +187,40 @@ func (s *HttpServiceImpl) printResponse(resp *http.Response) error {
 	}
 
 	if len(respBody) > 0 {
-		fmt.Fprintf(s.out, "%s\n", respBody)
+		// Use jsoncolor for json output
+		contentType := resp.Header.Get("Content-Type")
+		if strings.HasPrefix(contentType, "application/json") {
+			if err = s.printJsonColored(respBody); err != nil {
+				return err
+			}
+		} else {
+			fmt.Fprintf(s.out, "%s\n", respBody)
+		}
 	}
+	return nil
+}
+
+func (s *HttpServiceImpl) printJsonColored(data []byte) error {
+	var obj interface{}
+	var d []byte
+	var err error
+	if err := json.Unmarshal(data, &obj); err != nil {
+		return err
+	}
+	f := colorjson.NewFormatter()
+	f.Indent = 2
+	d, err = f.Marshal(obj)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(s.out, string(d))
 	return nil
 }
 
 func tryGetURL(args []string) (string, error) {
 	if len(args) > 0 {
 		url := args[0]
-		if !strings.HasPrefix(url, "http://") || !strings.HasPrefix(url, "https://") {
+		if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
 			url = "http://" + url
 		}
 		return url, nil
