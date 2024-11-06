@@ -23,12 +23,15 @@ package services
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/TylerBrock/colorjson"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -37,14 +40,15 @@ type (
 		MakeRequest() error
 	}
 	HttpServiceImpl struct {
-		url     string
-		method  string
-		data    string
-		proxy   string
-		headers []string
-		verbose bool
-		client  *http.Client
-		out     *os.File
+		url       string
+		method    string
+		data      string
+		proxy     string
+		headers   []string
+		verbose   bool
+		client    *http.Client
+		out       *os.File
+		formatter *colorjson.Formatter
 	}
 )
 
@@ -101,7 +105,9 @@ func NewHttpServiceByCommand(cmd *cobra.Command, args []string) (HttpService, er
 
 func NewHttpService(url, method, data, proxy string, headers []string, verbose bool) HttpService {
 	client := http.Client{}
-	return &HttpServiceImpl{url, strings.ToUpper(method), data, proxy, headers, verbose, &client, os.Stderr}
+	f := colorjson.NewFormatter()
+	f.KeyColor = color.New(color.FgBlue)
+	return &HttpServiceImpl{url, strings.ToUpper(method), data, proxy, headers, verbose, &client, os.Stderr, f}
 }
 
 func (s *HttpServiceImpl) MakeRequest() error {
@@ -185,15 +191,39 @@ func (s *HttpServiceImpl) printResponse(resp *http.Response) error {
 	}
 
 	if len(respBody) > 0 {
-		fmt.Fprintf(s.out, "%s\n", respBody)
+		// Use jsoncolor for json output
+		contentType := resp.Header.Get("Content-Type")
+		if strings.HasPrefix(contentType, "application/json") {
+			if err = s.printJsonColored(respBody); err != nil {
+				return err
+			}
+		} else {
+			fmt.Fprintf(s.out, "%s\n", respBody)
+		}
 	}
+	return nil
+}
+
+func (s *HttpServiceImpl) printJsonColored(data []byte) error {
+	var obj interface{}
+	var d []byte
+	var err error
+	if err := json.Unmarshal(data, &obj); err != nil {
+		return err
+	}
+	s.formatter.Indent = 2
+	d, err = s.formatter.Marshal(obj)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(s.out, string(d))
 	return nil
 }
 
 func tryGetURL(args []string) (string, error) {
 	if len(args) > 0 {
 		url := args[0]
-		if !strings.HasPrefix(url, "http://") || !strings.HasPrefix(url, "https://") {
+		if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
 			url = "http://" + url
 		}
 		return url, nil
