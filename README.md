@@ -17,9 +17,10 @@ git clone git@github.com:alex-bezverkhniy/calltester.git
 ```bash
 make build
 ```
-  Note: Current version of our build configuration supports only Linux.
-
-TODO: Write installation instructions
+Make a symbolic link to the binary or add `./bin` folder to the `$PATH` variable
+```bash
+sudo ln -s ./bin/calltester /usr/local/bin
+```
 
 ## Features
 
