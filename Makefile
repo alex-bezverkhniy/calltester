@@ -19,3 +19,8 @@ tidy:
 .PHONY: build
 build: 
 		go build -o bin/calltester main.go 
+
+## test: Runs tests
+.PHONY: test
+test: 
+		go test ./pkg/...
