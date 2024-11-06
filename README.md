@@ -6,13 +6,26 @@ Supports HTTP and Kafka-based APIs.
 
 ## Getting Started
 
+### Manually 
+
+You can install CallTester CLI by using the following commands:
+- Clone the repository: 
+```bash
+git clone git@github.com:alex-bezverkhniy/calltester.git
+```
+- Build the binary:
+```bash
+make build
+```
+  Note: Current version of our build configuration supports only Linux.
+
 TODO: Write installation instructions
 
 ## Features
 
 - [x] HTTP API calls (POST, GET, PUT, PATCH, DELETE etc.)
 - [x] Kafka subscriber and producer
-- [x] Build-in JSON support `TODO`
+- [x] Build-in JSON support
 - [ ] WebSocket API calls `TODO`
 - [ ] GraphQL API calls `TODO`
 

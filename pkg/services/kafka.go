@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"os"
 
-	c_kafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/spf13/cobra"
 )
 
@@ -84,7 +84,7 @@ func (k *KafkaServiceImpl) Subscribe() error {
 
 	fmt.Println("Consuming messages...")
 	fmt.Println("To exit press CTRL+C")
-	consumer, err := c_kafka.NewConsumer(&c_kafka.ConfigMap{
+	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": k.getUrl(),
 		"group.id":          "calltester-sub",
 		"auto.offset.reset": "smallest",
@@ -98,14 +98,14 @@ func (k *KafkaServiceImpl) Subscribe() error {
 	for run == true {
 		ev := consumer.Poll(100)
 		switch e := ev.(type) {
-		case *c_kafka.Message:
-			msg := ev.(*c_kafka.Message)
+		case *kafka.Message:
+			msg := ev.(*kafka.Message)
 			_, err := consumer.CommitMessage(msg)
 			if err != nil {
 				panic(err)
 			}
 			fmt.Printf("Message on - %s:\n%s\n", k.topic, string(msg.Value))
-		case c_kafka.Error:
+		case kafka.Error:
 			fmt.Fprintf(os.Stderr, "%% Error: %v\n", e)
 			run = false
 		default:
@@ -125,7 +125,7 @@ func (k *KafkaServiceImpl) Publish(data []byte) error {
 		fmt.Printf("\ttopic: %s\n", k.topic)
 		fmt.Printf("\tdata: %s\n", data)
 	}
-	producer, err := c_kafka.NewProducer(&c_kafka.ConfigMap{
+	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": k.getUrl(),
 		"client.id":         "calltester-pub",
 		"acks":              "all",
@@ -135,18 +135,18 @@ func (k *KafkaServiceImpl) Publish(data []byte) error {
 		panic(err)
 	}
 
-	delivery_chan := make(chan c_kafka.Event, 10000)
+	delivery_chan := make(chan kafka.Event, 10000)
 
 	// TODO: add key
-	err = producer.Produce(&c_kafka.Message{
-		TopicPartition: c_kafka.TopicPartition{Topic: &k.topic, Partition: c_kafka.PartitionAny},
+	err = producer.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &k.topic, Partition: kafka.PartitionAny},
 		Value:          data,
 	},
 		delivery_chan,
 	)
 
 	e := <-delivery_chan
-	m := e.(*c_kafka.Message)
+	m := e.(*kafka.Message)
 
 	if m.TopicPartition.Error != nil {
 		fmt.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
