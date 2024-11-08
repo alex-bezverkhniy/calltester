@@ -25,7 +25,7 @@ test:
 ## build: Build the binary for the current platform
 .PHONY: build
 build:
-	go build -o $(BINARY_NAME)
+	go build -o ./bin/$(BINARY_NAME)
 
 ## build-all: Builds executable for all platforms
 .PHONY: build-all
