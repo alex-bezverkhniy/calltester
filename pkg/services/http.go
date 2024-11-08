@@ -80,12 +80,12 @@ func NewHttpServiceByCommandAndMethod(cmd *cobra.Command, method string, args []
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		return nil, err
 	}
-
 	if len(url) == 0 {
 		if url, err = tryGetURL(args); err != nil {
 			return nil, err
 		}
 	}
+	url = fixURL(url)
 
 	s := NewHttpService(url, method, data, proxy, headers, verbose)
 
@@ -223,10 +223,14 @@ func (s *HttpServiceImpl) printJsonColored(data []byte) error {
 func tryGetURL(args []string) (string, error) {
 	if len(args) > 0 {
 		url := args[0]
-		if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-			url = "http://" + url
-		}
 		return url, nil
 	}
 	return "", fmt.Errorf("url is required")
+}
+
+func fixURL(url string) string {
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "http://" + url
+	}
+	return url
 }
