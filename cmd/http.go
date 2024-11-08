@@ -52,7 +52,7 @@ func init() {
 	rootCmd.AddCommand(httpCmd)
 
 	httpCmd.PersistentFlags().StringP("url", "u", "", "URL to send requests to")
-	httpCmd.PersistentFlags().StringP("data", "d", `{"test": "test"}`, "Request data")
+	httpCmd.PersistentFlags().StringP("data", "d", "", "Request data")
 	httpCmd.PersistentFlags().StringP("proxy", "p", "", "Proxy URL")
 	httpCmd.PersistentFlags().StringP("method", "m", "GET", "Method of the request (GET, POST, PUT, DELETE, PATCH, HEAD)")
 	httpCmd.PersistentFlags().StringArrayP("header", "H", []string{"Accept: */*"}, "HTTP header")
